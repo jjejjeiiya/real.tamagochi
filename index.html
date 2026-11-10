@@ -111,6 +111,12 @@ button{font-family:inherit;border:0;border-radius:14px;padding:12px 16px;cursor:
 .detail-item p{margin:4px 0 0;color:#53666d;font-size:16.52px;overflow-wrap:anywhere}
 .detail-item a{color:#328b9b;overflow-wrap:anywhere}
 .detail button,.close-button{margin-top:18px;background:#fff0f0;color:#a45d69}
+.back-to-results{
+  display:block;width:100%;margin:0 0 18px!important;
+  background:#e8f8f7!important;color:#287985!important;
+  border:1.5px solid #bfe5e3!important;
+}
+
 .muted{color:#829198;font-size:14.16px}
 .message{background:#fff;border:2px dashed #cce5e3;border-radius:18px;padding:24px;text-align:center;color:#61777d}
 .status{font-size:14.16px;color:#687386;overflow-wrap:anywhere}
@@ -496,6 +502,10 @@ async function searchServices() {
   }
 }
 
+// 상세정보에서 돌아갈 검색 결과의 위치와 카드 기억
+let lastResultScrollY = 0;
+let lastSelectedCard = null;
+
 // ==================================================
 // 9. 검색 결과 표시
 // ==================================================
@@ -530,7 +540,11 @@ function displayResults(services) {
       <div class="label">서비스 분야</div>
       <div class="value">${formatText(service[FIELD_KEYS.field])}</div>
       <p class="muted">카드를 누르면 상세정보를 확인할 수 있습니다.</p>`;
-    card.addEventListener("click", () => showDetail(service));
+    card.addEventListener("click", () => {
+      lastResultScrollY = window.scrollY;
+      lastSelectedCard = card;
+      showDetail(service);
+    });
     area.appendChild(card);
   });
 }
@@ -541,7 +555,7 @@ function displayResults(services) {
 async function showDetail(service) {
   const area = document.getElementById("detailArea");
   area.style.display = "block";
-  area.innerHTML = '<div class="message">상세정보를 불러오는 중입니다.</div>';
+  area.innerHTML = '<button type="button" class="back-to-results" onclick="closeDetail()">← 검색 결과로 돌아가기</button><div class="message">상세정보를 불러오는 중입니다.</div>';
   area.scrollIntoView({ behavior: "smooth", block: "start" });
 
   try {
@@ -556,7 +570,7 @@ async function showDetail(service) {
     }
     renderDetail(detail, service);
   } catch (error) {
-    area.innerHTML = `<div class="message">상세정보를 불러오지 못했습니다.<br><br>${escapeHTML(error.message)}</div>`;
+    area.innerHTML = `<button type="button" class="back-to-results" onclick="closeDetail()">← 검색 결과로 돌아가기</button><div class="message">상세정보를 불러오지 못했습니다.<br><br>${escapeHTML(error.message)}</div>`;
   }
 }
 
@@ -586,7 +600,7 @@ function renderDetail(detail, service) {
     ["DDISH_NM", ["DDISH_NM"]]
   ];
 
-  let html = `<h2>🔎 ${escapeHTML(detail.서비스명 ?? service[FIELD_KEYS.name] ?? "서비스 상세정보")}</h2>
+  let html = `<button type="button" class="back-to-results" onclick="closeDetail()">← 검색 결과로 돌아가기</button><h2>🔎 ${escapeHTML(detail.서비스명 ?? service[FIELD_KEYS.name] ?? "서비스 상세정보")}</h2>
     <p class="muted">아래 정보는 API가 제공하는 항목만 표시합니다.</p>`;
 
   fields.forEach(([label, keys]) => {
@@ -619,6 +633,12 @@ function renderDetail(detail, service) {
 
 function closeDetail() {
   document.getElementById("detailArea").style.display = "none";
+
+  if (lastSelectedCard && lastSelectedCard.isConnected) {
+    window.scrollTo({ top: lastResultScrollY, behavior: "smooth" });
+  } else {
+    document.getElementById("resultArea").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 }
 </script>
 </body>
