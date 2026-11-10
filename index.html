@@ -51,19 +51,25 @@ header p{margin:8px 0 17px;font-size:16.52px;color:#47747b}
 }
 .hero-art-wrap{position:relative;width:min(100%,540px);margin:0 auto;isolation:isolate}
 .hero-art-wrap .hero-art{width:100%;max-width:none;margin:0}
-.hero-touch-layer{position:absolute;inset:0;pointer-events:none;overflow:visible}
+.hero-touch-layer{
+  position:absolute;inset:6px;pointer-events:none;overflow:visible;
+  border-radius:19px;
+}
 .hero-character-touch{
   position:absolute;inset:0;width:100%;height:100%;padding:0;margin:0;
   border:0;border-radius:0;background-image:var(--hero-art-image);
   background-size:100% 100%;background-repeat:no-repeat;
   background-color:transparent!important;
-  pointer-events:auto;cursor:pointer;touch-action:manipulation;
+  opacity:0;pointer-events:auto;cursor:pointer;touch-action:manipulation;
   clip-path:polygon(var(--hit-polygon));
   transform-origin:var(--cx) var(--cy);box-shadow:none!important;
   -webkit-tap-highlight-color:transparent;
 }
 .hero-character-touch:focus-visible{outline:2px solid transparent;outline-offset:0}
-.hero-character-touch.is-bouncing{animation:soft-squish .58s cubic-bezier(.2,.8,.25,1)}
+.hero-character-touch.is-bouncing{
+  opacity:1;
+  animation:soft-squish .58s cubic-bezier(.2,.8,.25,1);
+}
 @keyframes soft-squish{
   0%{transform:scale(1,1) rotate(0)}
   18%{transform:scale(1.16,.84) rotate(-3deg)}
