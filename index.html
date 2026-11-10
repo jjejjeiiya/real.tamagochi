@@ -159,8 +159,10 @@ footer p{margin:5px 0}
       <div class="section-title">3. 직업을 선택하세요.</div>
       <div class="options">
         <label class="option"><input type="radio" name="job" value="고등학생"> 고등학생</label>
-        <label class="option"><input type="radio" name="job" value="대학생"> 대학생</label>
-        <label class="option"><input type="radio" name="job" value="해당없음"> 해당없음</label>
+        <label class="option"><input type="radio" name="job" value="대학생"> 대학생 및 대학원생</label>
+        <label class="option"><input type="radio" name="job" value="근로자"> 근로자 및 직장인</label>
+        <label class="option"><input type="radio" name="job" value="구직자"> 구직자 및 실업자</label>
+        <label class="option"><input type="radio" name="job" value="해당없음"> 해당 사항 없음</label>
       </div>
     </div>
 
@@ -376,14 +378,16 @@ function matchesGender(condition, gender) {
 }
 
 function matchesJob(condition, job) {
-  // 직업 코드 키가 API 문서와 다르면 수정하세요.
+  // 공공서비스 지원조건 API의 학생·직업 관련 코드
   const jobKey = {
     "고등학생": "JA0319",
     "대학생": "JA0320",
+    "근로자": "JA0326",
+    "구직자": "JA0327",
     "해당없음": "JA0322"
   }[job];
 
-  const jobKeys = ["JA0319", "JA0320", "JA0322"];
+  const jobKeys = ["JA0319", "JA0320", "JA0326", "JA0327", "JA0322"];
   const hasJobInfo = jobKeys.some(key => isActive(condition[key]));
   if (!hasJobInfo) return true;
   return isActive(condition[jobKey]);
