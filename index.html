@@ -744,9 +744,12 @@ document.querySelectorAll(".hero-side-mascot").forEach((mascot) => {
 const benefitMascot = document.querySelector(".benefit-mascot");
 if (benefitMascot) {
   let benefitTapCount = 0;
-  let secretImageLoaded = false;
+  let isSecretShowing = false;
+  let secretReturnTimer = null;
+  const originalMascotSrc = benefitMascot.getAttribute("src");
 
   const popStars = () => {
+    if (isSecretShowing) return;
     benefitTapCount += 1;
     benefitMascot.classList.remove("is-squishing");
     void benefitMascot.offsetWidth;
@@ -770,17 +773,29 @@ if (benefitMascot) {
       star.addEventListener("animationend", () => star.remove(), { once: true });
     }
 
-    if (benefitTapCount === 7 && !secretImageLoaded) {
-      secretImageLoaded = true;
+    if (benefitTapCount >= 7) {
+      benefitTapCount = 0;
+      isSecretShowing = true;
       benefitMascot.onload = () => {
-        benefitMascot.alt = "7번 터치해 변신한 수줍은 크림색 캐릭터";
+        benefitMascot.alt = "수줍은 크림색 복슬이 캐릭터";
         benefitMascot.setAttribute("aria-label", "비밀 모습으로 변신한 캐릭터");
       };
       benefitMascot.onerror = () => {
-        secretImageLoaded = false;
+        clearTimeout(secretReturnTimer);
+        isSecretShowing = false;
+        benefitMascot.src = originalMascotSrc;
+        benefitMascot.alt = "별 무늬가 있는 크림색 캐릭터";
+        benefitMascot.setAttribute("aria-label", "캐릭터를 만져 별을 띄우기");
         console.error("비밀 캐릭터 이미지를 불러오지 못했습니다.");
       };
       benefitMascot.src = "assets/" + encodeURIComponent("수줍은 크림색 복슬이 스티커.png");
+      clearTimeout(secretReturnTimer);
+      secretReturnTimer = setTimeout(() => {
+        benefitMascot.src = originalMascotSrc;
+        benefitMascot.alt = "별 무늬가 있는 크림색 캐릭터";
+        benefitMascot.setAttribute("aria-label", "캐릭터를 만져 별을 띄우기");
+        isSecretShowing = false;
+      }, 3000);
     }
   };
   benefitMascot.addEventListener("click", popStars);
