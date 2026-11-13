@@ -94,7 +94,28 @@ main{max-width:900px;margin:28px auto;padding:0 16px}
 .panel-heading h2{margin:0;padding-top:4px}
 .benefit-mascot{
   display:block;flex:0 0 auto;width:118px;height:118px;object-fit:contain;
-  margin:-5px 12px 0 0;pointer-events:none;
+  margin:-5px 12px 0 0;cursor:pointer;touch-action:manipulation;
+  transform-origin:50% 85%;
+}
+.benefit-mascot:focus-visible{outline:3px solid #e9c85c;outline-offset:4px;border-radius:18px}
+.benefit-mascot.is-squishing{animation:benefit-squish .62s cubic-bezier(.34,1.56,.64,1)}
+@keyframes benefit-squish{
+  0%{scale:1 1;translate:0 0}
+  18%{scale:1.13 .82;translate:0 7px}
+  42%{scale:.91 1.14;translate:0 -12px}
+  63%{scale:1.07 .94;translate:0 3px}
+  82%{scale:.98 1.03;translate:0 -2px}
+  100%{scale:1 1;translate:0 0}
+}
+.benefit-star{
+  position:absolute;z-index:5;pointer-events:none;font-size:17px;line-height:1;
+  color:#f4c94e;text-shadow:0 1px 2px #dcae4c66;
+  animation:benefit-star-pop .8s ease-out forwards;
+}
+@keyframes benefit-star-pop{
+  0%{opacity:0;transform:translate(0,8px) scale(.25) rotate(-20deg)}
+  25%{opacity:1;transform:translate(var(--sx),var(--sy)) scale(1.15) rotate(15deg)}
+  100%{opacity:0;transform:translate(calc(var(--sx)*1.5),calc(var(--sy) - 28px)) scale(.45) rotate(65deg)}
 }
 @media(max-width:600px){
   .panel-heading{min-height:84px;gap:8px}
@@ -204,7 +225,7 @@ footer p{margin:5px 0}
   <section class="panel">
     <div class="panel-heading">
       <h2>🍀 나에게 맞는 혜택 찾기</h2>
-      <img class="benefit-mascot" src="assets/benefit-mascot.webp" alt="별 무늬가 있는 크림색 캐릭터">
+      <img class="benefit-mascot" src="assets/benefit-mascot.webp" alt="별 무늬가 있는 크림색 캐릭터" role="button" tabindex="0" aria-label="캐릭터를 만져 별을 띄우기">
     </div>
 
     <div class="section">
@@ -718,6 +739,42 @@ document.querySelectorAll(".hero-side-mascot").forEach((mascot) => {
     }
   });
 });
+
+// 검색 패널의 크림색 캐릭터: 말랑 효과와 터치할 때마다 반짝이는 별
+const benefitMascot = document.querySelector(".benefit-mascot");
+if (benefitMascot) {
+  const popStars = () => {
+    benefitMascot.classList.remove("is-squishing");
+    void benefitMascot.offsetWidth;
+    benefitMascot.classList.add("is-squishing");
+
+    const stage = benefitMascot.parentElement;
+    const imageRect = benefitMascot.getBoundingClientRect();
+    const stageRect = stage.getBoundingClientRect();
+    const originX = imageRect.left - stageRect.left + imageRect.width / 2;
+    const originY = imageRect.top - stageRect.top + imageRect.height / 2;
+
+    for (let i = 0; i < 5; i++) {
+      const star = document.createElement("span");
+      star.className = "benefit-star";
+      star.textContent = i % 2 === 0 ? "✦" : "✧";
+      star.style.left = originX + (Math.random() - .5) * imageRect.width * .9 + "px";
+      star.style.top = originY + (Math.random() - .5) * imageRect.height * .65 + "px";
+      star.style.setProperty("--sx", (Math.random() * 34 - 17) + "px");
+      star.style.setProperty("--sy", (Math.random() * -28 - 8) + "px");
+      stage.appendChild(star);
+      star.addEventListener("animationend", () => star.remove(), { once: true });
+    }
+  };
+  benefitMascot.addEventListener("click", popStars);
+  benefitMascot.addEventListener("animationend", () => benefitMascot.classList.remove("is-squishing"));
+  benefitMascot.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      popStars();
+    }
+  });
+}
 </script>
 </body>
 </html>
