@@ -740,10 +740,14 @@ document.querySelectorAll(".hero-side-mascot").forEach((mascot) => {
   });
 });
 
-// 검색 패널의 크림색 캐릭터: 말랑 효과와 터치할 때마다 반짝이는 별
+// 검색 패널의 크림색 캐릭터: 터치할 때마다 별이 나오고 7번째에 비밀 모습으로 변신
 const benefitMascot = document.querySelector(".benefit-mascot");
 if (benefitMascot) {
+  let benefitTapCount = 0;
+  let secretImageLoaded = false;
+
   const popStars = () => {
+    benefitTapCount += 1;
     benefitMascot.classList.remove("is-squishing");
     void benefitMascot.offsetWidth;
     benefitMascot.classList.add("is-squishing");
@@ -764,6 +768,24 @@ if (benefitMascot) {
       star.style.setProperty("--sy", (Math.random() * -28 - 8) + "px");
       stage.appendChild(star);
       star.addEventListener("animationend", () => star.remove(), { once: true });
+    }
+
+    if (benefitTapCount === 7 && !secretImageLoaded) {
+      secretImageLoaded = true;
+      fetch("assets/secret-character.webp.b64")
+        .then((response) => {
+          if (!response.ok) throw new Error("비밀 캐릭터 이미지를 불러오지 못했습니다.");
+          return response.text();
+        })
+        .then((base64) => {
+          benefitMascot.src = "data:image/webp;base64," + base64.trim();
+          benefitMascot.alt = "7번 터치해 변신한 수줍은 크림색 캐릭터";
+          benefitMascot.setAttribute("aria-label", "비밀 모습으로 변신한 캐릭터");
+        })
+        .catch((error) => {
+          secretImageLoaded = false;
+          console.error(error);
+        });
     }
   };
   benefitMascot.addEventListener("click", popStars);
