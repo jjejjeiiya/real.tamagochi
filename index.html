@@ -772,20 +772,15 @@ if (benefitMascot) {
 
     if (benefitTapCount === 7 && !secretImageLoaded) {
       secretImageLoaded = true;
-      fetch("assets/secret-character.webp.b64")
-        .then((response) => {
-          if (!response.ok) throw new Error("비밀 캐릭터 이미지를 불러오지 못했습니다.");
-          return response.text();
-        })
-        .then((base64) => {
-          benefitMascot.src = "data:image/webp;base64," + base64.trim();
-          benefitMascot.alt = "7번 터치해 변신한 수줍은 크림색 캐릭터";
-          benefitMascot.setAttribute("aria-label", "비밀 모습으로 변신한 캐릭터");
-        })
-        .catch((error) => {
-          secretImageLoaded = false;
-          console.error(error);
-        });
+      benefitMascot.onload = () => {
+        benefitMascot.alt = "7번 터치해 변신한 수줍은 크림색 캐릭터";
+        benefitMascot.setAttribute("aria-label", "비밀 모습으로 변신한 캐릭터");
+      };
+      benefitMascot.onerror = () => {
+        secretImageLoaded = false;
+        console.error("비밀 캐릭터 이미지를 불러오지 못했습니다.");
+      };
+      benefitMascot.src = "assets/" + encodeURIComponent("수줍은 크림색 복슬이 스티커.png");
     }
   };
   benefitMascot.addEventListener("click", popStars);
