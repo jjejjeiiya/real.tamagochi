@@ -87,6 +87,20 @@ header p{margin:8px 0 17px;font-size:16.52px;color:#47747b}
 }
 
 main{max-width:900px;margin:28px auto;padding:0 16px}
+.panel-heading{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:16px;
+  min-height:112px;margin-bottom:2px;
+}
+.panel-heading h2{margin:0;padding-top:4px}
+.benefit-mascot{
+  display:block;flex:0 0 auto;width:118px;height:118px;object-fit:contain;
+  margin:-5px 12px 0 0;pointer-events:none;
+}
+@media(max-width:600px){
+  .panel-heading{min-height:84px;gap:8px}
+  .panel-heading h2{font-size:clamp(19px,5vw,24px)}
+  .benefit-mascot{width:82px;height:86px;margin:-5px 0 0}
+}
 .panel{
   background:#fff;border:2px solid #e5f0ee;border-radius:23px;padding:23px;
   margin-bottom:20px;box-shadow:0 6px 0 #dcefed,0 10px 25px #527b7510;
@@ -188,7 +202,10 @@ footer p{margin:5px 0}
 
 <main>
   <section class="panel">
-    <h2>🍀 나에게 맞는 혜택 찾기</h2>
+    <div class="panel-heading">
+      <h2>🍀 나에게 맞는 혜택 찾기</h2>
+      <img class="benefit-mascot" src="assets/benefit-mascot.webp" alt="별 무늬가 있는 크림색 캐릭터">
+    </div>
 
     <div class="section">
       <div class="section-title">1. 만 나이를 선택하세요.</div>
